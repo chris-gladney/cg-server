@@ -8,6 +8,7 @@ const {
   topicData,
   userData,
 } = require("../db/data/test-data/index");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed({ topicData, userData, articleData, commentData });
@@ -17,7 +18,7 @@ afterAll(() => {
   db.end();
 });
 
-describe.only("GET /api/topics", () => {
+describe("GET /api/topics", () => {
   test("Should respond with an array of response objects, each object having properties of slug and description", () => {
     return request(app)
       .get("/api/topics")
@@ -34,12 +35,12 @@ describe.only("GET /api/topics", () => {
 });
 
 describe("GET /api", () => {
-  test("Should return an object describing all the endpoints available to the user", () => {
+  test("Should return an object describing all the endpoints available to the user with descriptions and example responses", () => {
     return request(app)
       .get("/api")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toBe(3);
+        expect(body).toEqual(endpoints);
       });
   });
 });
