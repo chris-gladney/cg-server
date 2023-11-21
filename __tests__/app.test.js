@@ -44,3 +44,42 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("GET /api/articles/:articleId", () => {
+  test("Should return an article object with the relevant properties", () => {
+    return request(app)
+      .get("/api/articles/5")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          article_id: 5,
+          title: "UNCOVERED: catspiracy to bring down democracy",
+          topic: "cats",
+          author: "rogersop",
+          body: "Bastet walks amongst us, and the cats are taking arms!",
+          created_at: "2020-08-03T13:14:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+
+  test("Should return a 404 error if client attempts to access id that doens't exist", () => {
+    return request(app)
+      .get("/api/articles/55")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 error if clients attempts to access id using invalid id type", () => {
+    return request(app)
+      .get("/api/articles/carrot")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+});
