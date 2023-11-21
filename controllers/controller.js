@@ -22,7 +22,5 @@ exports.sendArticle = (req, res, next) => {
     .then((article) => {
       res.status(200).send(article);
     })
-    .catch((err) => {
-      res.status(err.status).send(err);
-    });
+    .catch(next);
 };
