@@ -44,3 +44,33 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("GET /api/articles/:articleId", () => {
+  test("Should return an article object with the relevant properties", () => {
+    return request(app)
+      .get("/api/articles/5")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: 5,
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+
+  test("Should return a 404 error if client attempts to access id that doens't exist", () => {
+    return request(app)
+      .get("/api/articles/55")
+      .expect(404)
+      .then(({ body }) => {
+        console.log(body, "<<< body in test")
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});
