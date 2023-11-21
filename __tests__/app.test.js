@@ -53,13 +53,14 @@ describe("GET /api/articles/:articleId", () => {
       .then(({ body }) => {
         expect(body).toEqual({
           article_id: 5,
-          title: 'UNCOVERED: catspiracy to bring down democracy',
-          topic: 'cats',
-          author: 'rogersop',
-          body: 'Bastet walks amongst us, and the cats are taking arms!',
+          title: "UNCOVERED: catspiracy to bring down democracy",
+          topic: "cats",
+          author: "rogersop",
+          body: "Bastet walks amongst us, and the cats are taking arms!",
           created_at: "2020-08-03T13:14:00.000Z",
           votes: 0,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
       });
   });
@@ -70,6 +71,15 @@ describe("GET /api/articles/:articleId", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
+      });
+  });
+
+  test("Should return a 400 error if clients attempts to access id using invalid id type", () => {
+    return request(app)
+      .get("/api/articles/carrot")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
       });
   });
 });

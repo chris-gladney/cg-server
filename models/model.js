@@ -1,4 +1,3 @@
-const { setFips } = require("crypto");
 const db = require("../db/connection");
 const fs = require("fs/promises");
 
@@ -13,6 +12,10 @@ exports.readEndPointsJSON = () => {
 };
 
 exports.getArticleById = (id) => {
+  if (Number(id) === NaN) {
+    return Promise.reject({ status: 400, msg: "invalid id type" });
+  }
+
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1`, [id])
     .then(({ rows }) => {

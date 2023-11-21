@@ -5,7 +5,12 @@ const {
   endpointsDescription,
   sendArticle,
 } = require("./controllers/controller");
-const { handleBadRequest } = require("./errors");
+const {
+    handleCustomErrors,
+    handlePsqlErrors,
+    handleServerErrors,
+  } = require('./errors');
+  
 
 app.use(express.json());
 
@@ -15,6 +20,8 @@ app.get("/api/topics", getAllTopics);
 
 app.get("/api/articles/:id", sendArticle);
 
-app.use(handleBadRequest);
+app.use(handleCustomErrors);
+app.use(handlePsqlErrors);
+app.use(handleServerErrors);
 
 module.exports = app;
