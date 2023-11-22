@@ -28,3 +28,18 @@ exports.getArticleById = (id) => {
       }
     });
 };
+
+exports.generateArticlesArray = () => {
+  return db.query(`SELECT * FROM articles;`).then(({ rows }) => {
+    return Promise.all(
+      rows.map((article) => {
+        return db.query(`SELECT * FROM comments WHERE article_id = $1`, [
+          article.article_id,
+        ]).then(({ rows }) => {
+          article.comment_count = rows.length;
+          return article;
+        });
+      })
+    );
+  });
+};
