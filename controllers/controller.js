@@ -2,6 +2,7 @@ const {
   sendAllTopics,
   readEndPointsJSON,
   getArticleById,
+  generateArticlesArray,
 } = require("../models/model");
 
 exports.getAllTopics = (req, res, next) => {
@@ -23,4 +24,10 @@ exports.sendArticle = (req, res, next) => {
       res.status(200).send(article);
     })
     .catch(next);
+};
+
+exports.getAllArticles = (req, res, next) => {
+  generateArticlesArray().then((data) => {
+    res.status(200).send(data)
+  });
 };
