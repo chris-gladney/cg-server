@@ -33,13 +33,27 @@ exports.generateArticlesArray = () => {
   return db.query(`SELECT * FROM articles;`).then(({ rows }) => {
     return Promise.all(
       rows.map((article) => {
-        return db.query(`SELECT * FROM comments WHERE article_id = $1`, [
-          article.article_id,
-        ]).then(({ rows }) => {
-          article.comment_count = rows.length;
-          return article;
-        });
+        return db
+          .query(`SELECT * FROM comments WHERE article_id = $1`, [
+            article.article_id,
+          ])
+          .then(({ rows }) => {
+            article.comment_count = rows.length;
+            return article;
+          });
       })
-    )
+    );
   });
+};
+
+exports.getCommentsById = (article_id) => {
+  return db
+    .query(`SELECT * FROM comments WHERE article_id = $1;`, [article_id])
+    .then(({ rows }) => {
+      if (rows.length) {
+        return rows;
+      } else {
+        return Promise.reject({ status: 404, msg: "bad request" });
+      }
+    });
 };
