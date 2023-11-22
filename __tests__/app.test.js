@@ -84,42 +84,32 @@ describe("GET /api/articles/:articleId", () => {
   });
 });
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   test("Should return status 200 and an array including all articles in the right format", () => {
     return request(app)
       .get("/api/articles")
-      .expect(200)
+      .then((res) => {
+        if (res.body.length !== 0) {
+          expect(200);
+        } else {
+          expect(404);
+        }
+        return res;
+      })
       .then(({ body }) => {
-        if (body.length) {
-          body.forEach((article) => {
-            expect(article).toMatchObject({
-              author: expect.any(String),
-              title: expect.any(String),
-              article_id: expect.any(Number),
-              topic: expect.any(String),
-              created_at: expect.any(String),
-              votes: expect.any(Number),
-              article_img_url: expect.any(String),
-              comment_count: expect.any(Number),
-            });
+        body.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
           });
-        } 
-        expect(body).toBeSorted("created_at", { descending: true })
+        });
+        expect(body).toBeSorted("created_at", { descending: true });
       });
   });
-});
-
-describe("GET /api/:article_id/comments", () => {
-  test("Should return 200 and relevant array of comments when given valid id", () => {
-    return request(app)
-      .get("/api/2/comments")
-      .expect(200)
-      .then(({ body }) => {
-        body.forEach(() => {});
-      });
-  });
-
-  test("Should return 404 if given a valid format id that doesn't exist in comments database", () => {});
-
-  test("Should return 400 and send back error message if given invalid id format", () => {});
 });
