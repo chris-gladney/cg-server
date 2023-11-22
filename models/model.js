@@ -40,6 +40,6 @@ exports.generateArticlesArray = () => {
           return article;
         });
       })
-    );
+    )
   });
 };
