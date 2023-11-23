@@ -138,7 +138,7 @@ describe("GET /api/:article_id/comments", () => {
       .get("/api/99/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "bad request" });
+        expect(body).toEqual({ msg: "not found" });
       });
   });
 
