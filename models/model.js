@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const fs = require("fs/promises");
+const { checkArticleIdExists } = require("../db/seeds/utils");
 
 exports.sendAllTopics = () => {
   return db.query(`SELECT * FROM topics;`);
@@ -53,7 +54,15 @@ exports.getCommentsById = (article_id) => {
       if (rows.length) {
         return rows;
       } else {
-        return Promise.reject({ status: 404, msg: "bad request" });
+        return db
+          .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
+          .then(({rows}) => {
+            if (rows[0]) {
+              return [];
+            } else {
+              return Promise.reject({ status: 404, msg: "bad request" });
+            }
+          });
       }
     });
 };
