@@ -3,6 +3,7 @@ const {
   readEndPointsJSON,
   getArticleById,
   generateArticlesArray,
+  getCommentsById,
 } = require("../models/model");
 
 exports.getAllTopics = (req, res, next) => {
@@ -28,6 +29,15 @@ exports.sendArticle = (req, res, next) => {
 
 exports.getAllArticles = (req, res, next) => {
   generateArticlesArray().then((data) => {
-    res.status(200).send(data)
+    res.status(200).send(data);
   });
+};
+
+exports.getComments = (req, res, next) => {
+  const { article_id } = req.params;
+  getCommentsById(article_id)
+    .then((comments) => {
+      res.status(200).send(comments);
+    })
+    .catch(next);
 };

@@ -113,3 +113,58 @@ describe("GET /api/articles", () => {
       });
   });
 });
+
+describe("GET /api/:article_id/comments", () => {
+  test("Should return 200 and relevant array of comments when given valid id", () => {
+    return request(app)
+      .get("/api/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((commentObj) => {
+          expect(commentObj).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
+
+  test("Should return 404 if given a valid format id that doesn't exist in comments database", () => {
+    return request(app)
+      .get("/api/99/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "not found" });
+      });
+  });
+
+  test("Should return 400 and send back error message if given invalid id format", () => {
+    return request(app)
+      .get("/api/carrot/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid input" });
+      });
+  });
+
+  test("Should check that the comments sent back are ordered by most recent first", () => {
+    return request(app)
+      .get("/api/1/comments")
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeSorted("created_at", { descending: true });
+      });
+  });
+
+  test("Should return status 200 and an empty response body if passed a valid id but there are no comments", () => {
+    return request(app)
+      .get("/api/2/comments")
+      .expect(({ body }) => {
+        expect(body).toEqual([]);
+      });
+  });
+});

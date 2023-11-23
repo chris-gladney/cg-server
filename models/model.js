@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const fs = require("fs/promises");
+const { checkArticleIdExists } = require("../db/seeds/utils");
 
 exports.sendAllTopics = () => {
   return db.query(`SELECT * FROM topics;`);
@@ -33,13 +34,31 @@ exports.generateArticlesArray = () => {
   return db.query(`SELECT * FROM articles;`).then(({ rows }) => {
     return Promise.all(
       rows.map((article) => {
-        return db.query(`SELECT * FROM comments WHERE article_id = $1`, [
-          article.article_id,
-        ]).then(({ rows }) => {
-          article.comment_count = rows.length;
-          return article;
-        });
+        return db
+          .query(`SELECT * FROM comments WHERE article_id = $1`, [
+            article.article_id,
+          ])
+          .then(({ rows }) => {
+            article.comment_count = rows.length;
+            return article;
+          });
       })
-    )
+    );
   });
+};
+
+exports.getCommentsById = (article_id) => {
+  return db
+    .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      } else {
+        return db
+          .query(`SELECT * FROM comments WHERE article_id = $1`, [article_id])
+          .then(({ rows }) => {
+            return rows;
+          });
+      }
+    });
 };
