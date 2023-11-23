@@ -49,19 +49,15 @@ exports.generateArticlesArray = () => {
 
 exports.getCommentsById = (article_id) => {
   return db
-    .query(`SELECT * FROM comments WHERE article_id = $1;`, [article_id])
+    .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
     .then(({ rows }) => {
-      if (rows.length) {
-        return rows;
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "bad request" });
       } else {
         return db
-          .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
-          .then(({rows}) => {
-            if (rows[0]) {
-              return [];
-            } else {
-              return Promise.reject({ status: 404, msg: "bad request" });
-            }
+          .query(`SELECT * FROM comments WHERE article_id = $1`, [article_id])
+          .then(({ rows }) => {
+            return rows;
           });
       }
     });
