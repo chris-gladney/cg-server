@@ -235,7 +235,58 @@ describe("POST /api/articles/:article_id/comments", () => {
         body: "Any",
       })
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "not found" })
+        expect(body).toEqual({ msg: "not found" });
       });
   });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("Should return updated article with correctly incremented votes with status code of 201", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          article_id: 3,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 1,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+
+  test("Should return 400 if given invalid id format", () => {
+    return request(app)
+      .patch("/api/articles/carrot")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid input" });
+      });
+  });
+
+  test("Should return 404 if given valid id format not associated with any article", () => {
+    return request(app)
+      .patch("/api/articles/99")
+      .send({ inc_votes: 100 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "not found" });
+      });
+  });
+
+  test("Should throw a 400 error if given an inc_votes of incorrect format", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: "hello" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid input" });
+      });
+  })
 });

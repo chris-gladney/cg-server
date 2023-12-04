@@ -69,14 +69,32 @@ exports.updateComments = (article_id, commentObj) => {
       if (!rows.length) {
         return Promise.reject({ status: 404, msg: "not found" });
       } else {
-          return db
-            .query(
-              `INSERT INTO comments (body, article_id, author) VALUES ($1, $2, $3) RETURNING *;`,
-              [commentObj.body, article_id, commentObj.username]
-            )
-            .then(({ rows }) => {
-              return rows[0];
-            });
+        return db
+          .query(
+            `INSERT INTO comments (body, article_id, author) VALUES ($1, $2, $3) RETURNING *;`,
+            [commentObj.body, article_id, commentObj.username]
+          )
+          .then(({ rows }) => {
+            return rows[0];
+          });
       }
+    });
+};
+
+exports.updateArticle = (inc_votes, article_id) => {
+  return db
+    .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      } else {
+        return db.query(
+          `UPDATE articles set votes = votes + $2 WHERE article_id = $1 RETURNING *;`,
+          [article_id, inc_votes]
+        );
+      }
+    })
+    .then(({ rows }) => {
+      return rows[0];
     });
 };

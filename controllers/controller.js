@@ -5,6 +5,7 @@ const {
   generateArticlesArray,
   getCommentsById,
   updateComments,
+  updateArticle,
 } = require("../models/model");
 
 exports.getAllTopics = (req, res, next) => {
@@ -49,6 +50,16 @@ exports.postComment = (req, res, next) => {
   updateComments(article_id, commentObj)
     .then((newComment) => {
       res.status(201).send(newComment);
+    })
+    .catch(next);
+};
+
+exports.patchArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  updateArticle(inc_votes, article_id)
+    .then((updatedArticle) => {
+      res.status(200).send(updatedArticle);
     })
     .catch(next);
 };
