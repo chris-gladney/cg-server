@@ -168,3 +168,125 @@ describe("GET /api/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("Expect 201 when given valid article id and response body should return the posted comment", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({
+        username: "butter_bridge",
+        body: "Obi will hate this!",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          comment_id: 19,
+          body: "Obi will hate this!",
+          article_id: 5,
+          author: "butter_bridge",
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+        });
+        return db.query(`SELECT * FROM comments WHERE comment_id = 19;`);
+      })
+      .then(({ rows }) => {
+        expect(rows[0]).toEqual({
+          comment_id: 19,
+          body: "Obi will hate this!",
+          article_id: 5,
+          author: "butter_bridge",
+          votes: expect.any(Number),
+          created_at: expect.any(Object),
+        });
+      });
+  });
+
+  test("Should return 404 if given a valid id that doesn't exist", () => {
+    return request(app)
+      .post("/api/articles/99/comments")
+      .send({
+        username: "Any",
+        body: "Any",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "not found" });
+      });
+  });
+
+  test("Should return 400 if given invalid id format", () => {
+    return request(app)
+      .post("/api/articles/carrot/comments")
+      .send({
+        username: "Any",
+        body: "Any",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid input" });
+      });
+  });
+
+  test("Should return 404 if given an invalid username", () => {
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send({
+        username: "GrumpyCat17",
+        body: "Any",
+      })
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "not found" });
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("Should return updated article with correctly incremented votes with status code of 201", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          article_id: 3,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 1,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+
+  test("Should return 400 if given invalid id format", () => {
+    return request(app)
+      .patch("/api/articles/carrot")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid input" });
+      });
+  });
+
+  test("Should return 404 if given valid id format not associated with any article", () => {
+    return request(app)
+      .patch("/api/articles/99")
+      .send({ inc_votes: 100 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "not found" });
+      });
+  });
+
+  test("Should throw a 400 error if given an inc_votes of incorrect format", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: "hello" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid input" });
+      });
+  })
+});
