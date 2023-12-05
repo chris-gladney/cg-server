@@ -288,5 +288,19 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Invalid input" });
       });
-  })
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("Should throw 400 error if given a comment_id of invalid format", () => {
+    return request(app).delete("/api/comments/carrot").expect(400);
+  });
+
+  test("Should throw a 204 error if given a valid comment_id that doesn't exist", () => {
+    return request(app).delete("/api/comments/199").expect(204);
+  });
+
+  test("Should return a 204 if given a vlid comment_id", () => {
+    return request(app).delete("/api/comments/2").expect(204);
+  });
 });
