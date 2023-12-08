@@ -8,6 +8,7 @@ const {
   getComments,
   postComment,
   patchArticle,
+  deleteComment,
 } = require("./controllers/controller");
 const {
   handleCustomErrors,
@@ -30,6 +31,8 @@ app.get("/api/:article_id/comments", getComments);
 app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", patchArticle);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.use(handleCustomErrors);
 app.use(handlePsqlErrors);
