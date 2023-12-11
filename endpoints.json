@@ -62,5 +62,26 @@
         "created_at": 1600560600000
       }
     ]
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates the votes for a article referenced by its id",
+    "queries": [],
+    "exampleResponse": [
+      {
+        "comment_id": 10,
+        "body": "git push origin master",
+        "votes": 1,
+        "author": "icellusedkars",
+        "article_id": 3,
+        "created_at": 1592641440000
+      }
+    ]
+  },
+  "DELETE /api/comments/:comment:id": {
+    "description": "deletes the comment referenced by its id",
+    "queries": [],
+    "exampleResponse": [
+      "res.status === 204"
+    ]
   }
 }

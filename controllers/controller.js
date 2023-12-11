@@ -67,7 +67,11 @@ exports.patchArticle = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
   const { comment_id } = req.params;
-  getCommentToDelete(comment_id)
+  const promiseArray = [
+    getCommentsById(comment_id),
+    getCommentToDelete(comment_id),
+  ];
+  Promise.all(promiseArray)
     .then(() => {
       res.status(204).send();
     })
