@@ -117,7 +117,7 @@ describe("GET /api/articles", () => {
 describe("GET /api/:article_id/comments", () => {
   test("Should return 200 and relevant array of comments when given valid id", () => {
     return request(app)
-      .get("/api/1/comments")
+      .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
         body.forEach((commentObj) => {
@@ -135,7 +135,7 @@ describe("GET /api/:article_id/comments", () => {
 
   test("Should return 404 if given a valid format id that doesn't exist in comments database", () => {
     return request(app)
-      .get("/api/99/comments")
+      .get("/api/articles/99/comments")
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "not found" });
@@ -144,7 +144,7 @@ describe("GET /api/:article_id/comments", () => {
 
   test("Should return 400 and send back error message if given invalid id format", () => {
     return request(app)
-      .get("/api/carrot/comments")
+      .get("/api/articles/carrot/comments")
       .expect(400)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Invalid input" });
@@ -153,7 +153,7 @@ describe("GET /api/:article_id/comments", () => {
 
   test("Should check that the comments sent back are ordered by most recent first", () => {
     return request(app)
-      .get("/api/1/comments")
+      .get("/api/articles/1/comments")
       .expect(200)
       .expect(({ body }) => {
         expect(body).toBeSorted("created_at", { descending: true });
@@ -162,7 +162,7 @@ describe("GET /api/:article_id/comments", () => {
 
   test("Should return status 200 and an empty response body if passed a valid id but there are no comments", () => {
     return request(app)
-      .get("/api/2/comments")
+      .get("/api/articles/2/comments")
       .expect(({ body }) => {
         expect(body).toEqual([]);
       });
