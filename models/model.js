@@ -102,3 +102,9 @@ exports.updateArticle = (inc_votes, article_id) => {
 exports.getCommentToDelete = (comment_id) => {
   return db.query(`DELETE FROM comments WHERE comment_id = $1;`, [comment_id]);
 };
+
+exports.generateUserArray = () => {
+  return db.query("SELECT * FROM users;").then(({ rows }) => {
+    return rows;
+  });
+};

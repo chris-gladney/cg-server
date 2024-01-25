@@ -7,6 +7,7 @@ const {
   updateComments,
   updateArticle,
   getCommentToDelete,
+  generateUserArray,
 } = require("../models/model");
 
 exports.getAllTopics = (req, res, next) => {
@@ -74,6 +75,14 @@ exports.deleteComment = (req, res, next) => {
   Promise.all(promiseArray)
     .then(() => {
       res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.getAllUsers = (req, res, next) => {
+  generateUserArray()
+    .then((data) => {
+      res.status(200).send(data);
     })
     .catch(next);
 };

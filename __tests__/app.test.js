@@ -300,7 +300,24 @@ describe("DELETE /api/comments/:comment_id", () => {
     return request(app).delete("/api/comments/199").expect(404);
   });
 
-  test("Should return a 204 if given a vlid comment_id", () => {
+  test("Should return a 204 if given a valid comment_id", () => {
     return request(app).delete("/api/comments/2").expect(204);
+  });
+});
+
+describe("GET /api/users", () => {
+  test("Should return status 200 and an array including all users in the right format", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
   });
 });
