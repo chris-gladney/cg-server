@@ -29,21 +29,40 @@ exports.getArticleById = (id) => {
     });
 };
 
-exports.generateArticlesArray = () => {
-  return db.query(`SELECT * FROM articles;`).then(({ rows }) => {
-    return Promise.all(
-      rows.map((article) => {
-        return db
-          .query(`SELECT * FROM comments WHERE article_id = $1`, [
-            article.article_id,
-          ])
-          .then(({ rows }) => {
-            article.comment_count = rows.length;
-            return article;
-          });
-      })
-    );
-  });
+exports.generateArticlesArray = (topic) => {
+  if (!topic) {
+    return db.query(`SELECT * FROM articles;`).then(({ rows }) => {
+      return Promise.all(
+        rows.map((article) => {
+          return db
+            .query(`SELECT * FROM comments WHERE article_id = $1`, [
+              article.article_id,
+            ])
+            .then(({ rows }) => {
+              article.comment_count = rows.length;
+              return article;
+            });
+        })
+      );
+    });
+  } else {
+    return db
+      .query(`SELECT * FROM articles WHERE topic = $1`, [topic])
+      .then(({ rows }) => {
+        return Promise.all(
+          rows.map((article) => {
+            return db
+              .query(`SELECT * FROM comments WHERE article_id = $1`, [
+                article.article_id,
+              ])
+              .then(({ rows }) => {
+                article.comment_count = rows.length;
+                return article;
+              });
+          })
+        );
+      });
+  }
 };
 
 exports.getCommentsById = (article_id) => {

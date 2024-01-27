@@ -32,7 +32,8 @@ exports.sendArticle = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  generateArticlesArray().then((data) => {
+  const { topic } = req.query;
+  generateArticlesArray(topic).then((data) => {
     res.status(200).send(data);
   });
 };
