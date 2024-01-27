@@ -327,7 +327,7 @@ describe("GET /api/articles (topic query)", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
-      .then(({body}) => {
+      .then(({ body }) => {
         body.forEach((article) => {
           expect(article).toMatchObject({
             author: expect.any(String),
@@ -339,7 +339,15 @@ describe("GET /api/articles (topic query)", () => {
             article_img_url: expect.any(String),
             comment_count: expect.any(Number),
           });
-        })
-      })
-  })
-})
+        });
+      });
+  });
+  test("Should return an empty array if given a topic that doens't exist", () => {
+    return request(app)
+      .get("/api/articles?topic=notavailable")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual([]);
+      });
+  });
+});
